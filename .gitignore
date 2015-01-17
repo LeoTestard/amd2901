@@ -1,3 +1,5 @@
-/amd_tb.vcd
+/*.vcd
 /build/
+/cells/*.cf
+/cells/*.o
 *.pyc

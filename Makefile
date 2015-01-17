@@ -38,11 +38,8 @@ endef
 $(error $(errmsg))
 endif
 
-# sxlib and pxlib cells library
-
-CELLS_LIBDIR = cells
-CELLS_SRCS = $(wildcard $(CELLS_LIBDIR)/*.vhd)
-CELLS_OBJS = $(CELLS_SRCS:$(CELLS_LIBDIR)/%.vhd=$(OBJ_DIR)/%.o)
+CELLS_LIBDIR  = cells
+CELLS_LIBNAME = sxlib
 
 # VHDL variables
 
@@ -56,7 +53,7 @@ VHDL_TEST_SRCS = amd_iss slice_tb#amd_tb
 VHDL_ALL_SRCS  = $(VHDL_SRCS) $(VHDL_TEST_SRCS)
 
 VHDL_OBJS += $(VHDL_ALL_SRCS:%=$(VHDL_WORKDIR)/%.o)
-VHDLFLAGS += --work=$(VHDL_WORKLIB) --workdir=$(VHDL_WORKDIR)
+VHDLFLAGS += -P$(CELLS_LIBDIR) --work=$(VHDL_WORKLIB) --workdir=$(VHDL_WORKDIR)
 
 # Native code
 
@@ -70,7 +67,7 @@ CFLAGS += -Wall -I$(INC_DIR)
 NATIVE_OBJS = $(C_OBJS) $(ASM_OBJS)
 NATIVE_OBJS_LINKFLAGS = $(NATIVE_OBJS:%=-Wl,%)
 
-ALL_OBJS = $(NATIVE_OBJS) $(VHDL_OBJS) $(CELLS_OBJS)
+ALL_OBJS = $(NATIVE_OBJS) $(VHDL_OBJS)
 
 # GHDL needs the sources at link-time. Since those are
 # part of a chain of artifacts, we must explicitly tell
@@ -80,7 +77,7 @@ VHDL_GENFILES = $(VHDL_SRCS:%=$(BUILD_DIR)/%.vhd)
 VHDL_VSTFILES = $(VHDL_SRCS:%=$(BUILD_DIR)/%.vst)
 .PRECIOUS: $(VHDL_GENFILES) $(VHDL_VSTFILES)
 
-all: simul
+all: cells_lib simul
 	
 simul: $(OBJ_DIR) $(MAIN_BIN)
 
@@ -98,8 +95,8 @@ $(MAIN_BIN): $(ALL_OBJS)
 $(VHDL_WORKDIR)/%.o: $(BUILD_DIR)/%.vhd
 	ghdl -i $(VHDLFLAGS) $^
 
-$(VHDL_WORKDIR)/%.o: $(CELLS_LIBDIR)/%.vhd
-	ghdl -i $(VHDLFLAGS) $^
+#$(VHDL_WORKDIR)/%.o: $(CELLS_LIBDIR)/%.vhd
+#	ghdl -i $(VHDLFLAGS) $^
 
 $(VHDL_WORKDIR)/%.o: $(TEST_DIR)/%.vhdl
 	ghdl -i $(VHDLFLAGS) $^
@@ -138,6 +135,10 @@ $(BUILD_DIR)/%.vst: $(VHDL_SRCDIR)/%.py
 # add a directive to link them against our cells library
 $(BUILD_DIR)/%.vhd: $(BUILD_DIR)/%.vst
 	$(VASY) -I vst -s -S -o $* $*
+	sed -i "/ENTITY/i\library sxlib;\nuse sxlib.all;\n" $@
+
+cells_lib:
+	make -C $(CELLS_LIBDIR)
 
 run: all
 	cd $(BUILD_DIR) ; ghdl -r $(TARGET) --vcd=../$(TARGET).vcd
