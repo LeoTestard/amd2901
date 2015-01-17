@@ -4,7 +4,7 @@ BUILD_DIR = build
 INC_DIR   = $(TEST_DIR)/include
 OBJ_DIR	  = $(BUILD_DIR)/obj
 
-TARGET   = amd_tb
+TARGET   = slice_tb#amd_tb
 MAIN_BIN = $(BUILD_DIR)/$(TARGET)
 
 ARCH = $(shell uname -m)
@@ -51,8 +51,8 @@ VHDL_WORKDIR  = $(OBJ_DIR)
 VHDL_WORKFILE = $(VHDL_WORKDIR)/$(VHDL_WORKLIB)-obj93.cf
 VHDL_SRCDIR   = $(SRC_DIR)
 
-VHDL_SRCS 	   = accu alu mux_in mux_out ram core amd2901
-VHDL_TEST_SRCS = amd_iss amd_tb
+VHDL_SRCS 	   = accu alu mux_in mux_out ram core amd2901 slice
+VHDL_TEST_SRCS = amd_iss slice_tb#amd_tb
 VHDL_ALL_SRCS  = $(VHDL_SRCS) $(VHDL_TEST_SRCS)
 
 VHDL_OBJS += $(VHDL_ALL_SRCS:%=$(VHDL_WORKDIR)/%.o)
