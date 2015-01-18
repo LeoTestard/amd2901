@@ -52,8 +52,8 @@ begin
 
     -- r0 and r3 can be used when shifting (resp. right and left) to output
     -- the resp. LSB and MSB of the shifted value. otherwise they are inputs
-    r0_out <= ram_input (0) when ram_shift = MEM_WRITE_SHIFT_RIGHT else 'Z';
-    r3_out <= ram_input (3) when ram_shift = MEM_WRITE_SHIFT_LEFT  else 'Z';
+    r0_out <= ram_input (0);
+    r3_out <= ram_input (3);
 
     process(clk) begin
         if rising_edge(clk) and ram_we = '1' then

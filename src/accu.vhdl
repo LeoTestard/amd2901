@@ -37,8 +37,8 @@ begin
 
     -- q0 and q3 can be used when shifting (resp. right and left) to output
     -- the resp. LSB and MSB of the shifted value. otherwise they are inputs
-    q0_out <= q_input (0) when q_shift (2 downto 1) = Q_WRITE_SHIFT_RIGHT else 'Z';
-    q3_out <= q_input (3) when q_shift (2 downto 1) = Q_WRITE_SHIFT_LEFT  else 'Z';
+    q0_out <= reg_out (0);
+    q3_out <= reg_out (3);
 
     -- writing in the Q register (accumulator)
     process(clk) begin

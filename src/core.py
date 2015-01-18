@@ -125,12 +125,12 @@ class core(Entity):
             'vss' : self.vss
         })
 
-        # FIXME: should be handled by the RAM/the accu.
-        # those signals are computed 2 times...
-        not_i7 = Signal("ni7", 1)
-        self.inv(self.i[7], not_i7)
+        # other output flags
+
+        not_i8 = Signal("ni8", 1)
+        self.inv(self.i[8], not_i8)
         self.and_((self.i[8], self.i[7]), self.shift_l)
-        self.and_((self.i[8], not_i7), self.shift_r)
+        self.nor((not_i8, self.i[7]), self.shift_r)
 
         # FIXME: should be handled by the ALU
         # dummy values for now...
