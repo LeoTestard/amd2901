@@ -150,3 +150,6 @@ clean:
 	rm -f  $(TARGET).vcd
 	rm -f  $(MAIN_BIN)
 	rm -rf $(BUILD_DIR)
+
+cleanall: clean
+	make -C $(CELLS_LIBDIR) clean
