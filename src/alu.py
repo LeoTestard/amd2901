@@ -130,6 +130,7 @@ class ALU(Entity):
         # ekh.
         xor_ng = Signal('xor_ng', 1)
         xor_cn4 = Signal('xor_cn4', 1)
+        xor_ovr = Signal('xor_ovr', 1)
         nor0 = Signal('xor_nor0', 1)
         nor1 = Signal('xor_nor1', 1)
         nor2 = Signal('xor_nor2', 1)
@@ -144,6 +145,7 @@ class ALU(Entity):
         self.nand((nand0, np2), nand1)
         self.nand((nor3, p2[1]), xor_ng)
         self.nand((nor3, nand1), xor_cn4)
+        self.inv(xor_cn4, xor_ovr)
 
         # or
         or_cn4 = Signal('or_cn4', 1)
@@ -227,9 +229,11 @@ class ALU(Entity):
 
         ovr_add = Signal('ovr_add', 1)
         ovr_and = Signal('ovr_and', 1)
+        ovr_xor = Signal('ovr_xor', 1)
         self.nand((add_ovr, out_is_add), ovr_add)
         self.nand((and_ovr, out_is_and), ovr_and)
-        self.nand((ovr_add, cn4_or, ovr_and, cn4_xor), self.ovr)
+        self.nand((xor_ovr, out_is_xor), ovr_xor)
+        self.nand((ovr_add, cn4_or, ovr_and, ovr_xor), self.ovr)
 
 alu = ALU('alu')
 alu.Interface()
