@@ -132,10 +132,11 @@ class core(Entity):
         self.and_((self.i[8], self.i[7]), self.shift_l)
         self.nor((not_i8, self.i[7]), self.shift_r)
 
-        # FIXME: should be handled by the ALU
-        # dummy values for now...
-        self.inv(self.cin, self.f3)
-        self.inv(self.cin, self.zero)
+        # FIXME: would a buf gate be better ?
+        tmp = Signal('tmp_inv', 1)
+        self.inv(alu_out[3], tmp)
+        self.inv(tmp, self.f3)
+        self.nor([alu_out[i] for i in range(4)], self.zero)
 
         self.inv(self.noe, self.y_oe)
 
